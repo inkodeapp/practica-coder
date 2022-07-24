@@ -37,6 +37,7 @@ export default function ModalView(props) {
     <TouchableOpacity
       style={styles.button}
       onPress={() => onHandlerCompleteItem(itemSelected.id)}
+
     >
       <Text  style={styles.text} >Completar</Text>
     </TouchableOpacity>
