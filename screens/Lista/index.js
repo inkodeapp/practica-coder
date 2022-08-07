@@ -40,6 +40,8 @@ const Lista = ({ navigation }) => {
     setModalVisible(!modalVisible);
   };
 
+
+
   const onHandlerModal = (id) => {
     setItemSelected(list.find((item) => item.id === id));
     setModalVisible(!modalVisible);

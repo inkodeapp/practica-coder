@@ -2,8 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
 import { useState } from "react";
 import { useFonts } from "expo-font";
-import AppLoading from "expo-app-loading";
-import Navigator from "./navigation/Navigator";
+import TabNavigator from "./navigation/TabNavigator";
+import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -18,7 +18,10 @@ export default function App() {
 
 
   return (
-    <Navigator />
+    <NavigationContainer>
+    <TabNavigator  />   
+    </NavigationContainer>
+
   );
 }
 const styles = StyleSheet.create({

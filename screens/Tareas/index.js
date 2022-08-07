@@ -10,22 +10,28 @@ import { useState } from "react";
 
 const Tareas = ({ route, navigation }) => {
   const { editItem } = route.params;
+
   const [list, setList] = useState(route.params.list);
   const [textItem, setTextItem] = useState("");
   const [itemSelected, setItemSelected] = useState();
-
+  
   const onHandlerChangeItem = (text) => {
     setTextItem(text);
   };
 
   useEffect(() => {
+    if (editItem) {
+      setTextItem(editItem.text);
+    }
+
+    setList(route.params.list);
     list.map((item) => {
       if (item.id === editItem) {
         setTextItem(item.text);
         setItemSelected(item.id);
       }
     });
-  }, []);
+  }, [editItem]);
 
   const onHandlerModify = (id, newtext) => {
     setList((item) =>
