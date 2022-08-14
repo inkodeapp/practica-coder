@@ -4,46 +4,37 @@ import Boton from "../../components/Boton";
 import Item from "../../components/Item";
 import ModalView from "../../components/ModalView";
 import { useState } from "react";
-
+import { useSelector, useDispatch } from "react-redux";
+import { addItem } from "../../store/lista/action";
 
 const Lista = ({ navigation }) => {
+  const categories = useSelector((store) => store.listaReducer.lista);
+  const dispatch = useDispatch();
+
   const [textItem, setTextItem] = useState("");
   const [list, setList] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [itemSelected, setItemSelected] = useState({});
+  const [itemID, setItemID] = useState(0);
 
   const onHandlerChangeItem = (text) => {
     setTextItem(text);
   };
 
   const onHandlerAddItem = () => {
-    setList([...list, { text: textItem, id: Date.now(), status: false }]);
+    dispatch(addItem({ text: textItem, id: Date.now(), status: false }));
+    /* setList([...list, { text: textItem, id: Date.now(), status: false }]);*/
     setTextItem("");
   };
 
-  const onHandlerDelete = (id) => {
-    setList((item) => item.filter((item) => item.id !== id));
-    setItemSelected({});
+  const onShowModal = (id) => {
     setModalVisible(!modalVisible);
   };
-
-  const onHandlerComplete = (id) => {
-    setList((item) =>
-      item.map((item) => {
-        if (item.id === id) {
-          item.status = !item.status;
-        }
-        return item;
-      })
-    );
-    setItemSelected({});
-    setModalVisible(!modalVisible);
-  };
-
-
 
   const onHandlerModal = (id) => {
-    setItemSelected(list.find((item) => item.id === id));
+    setItemID(id);
+    /*
+    setItemSelected(categories.find((item) => item.id === id));*/
     setModalVisible(!modalVisible);
   };
 
@@ -59,20 +50,22 @@ const Lista = ({ navigation }) => {
           />
           <Boton
             title="Agregar"
-            onPress={onHandlerAddItem}
+            onPress={() => {
+              onHandlerAddItem();
+            }}
             disabled={textItem.length == 0 ? true : false}
           />
         </View>
         <FlatList
           style={styles.list}
-          data={list}
+          data={categories/*list*/}
           renderItem={({ item }) => (
             <Item
               text={item.text}
               status={item.status}
               accion={() => onHandlerModal(item.id)}
               onLongPress={() =>
-                navigation.navigate("Tarea", { editItem: item.id, list: list })
+                navigation.navigate("Tarea", { itemID: item.id })
               }
             />
           )}
@@ -81,14 +74,13 @@ const Lista = ({ navigation }) => {
         <ModalView
           modalVisible={modalVisible}
           itemSelected={itemSelected}
-          onHandlerDeleteItem={onHandlerDelete}
-          onHandlerCompleteItem={onHandlerComplete}
+          itemID={itemID}
+          onShowModal={onShowModal}
         />
       </View>
     </View>
   );
   return <View style={styles.container}>{content}</View>;
-
 };
 
 const styles = StyleSheet.create({

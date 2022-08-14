@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useFonts } from "expo-font";
 import TabNavigator from "./navigation/TabNavigator";
 import { NavigationContainer } from "@react-navigation/native";
+import { Provider } from "react-redux";
+import store from "./store";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -11,19 +13,22 @@ export default function App() {
     OpenSansBold: require("./assets/fonts/OpenSans-Bold.ttf"),
   });
 
-
   if (!fontsLoaded) {
     return null;
   }
 
-
   return (
-    <NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <TabNavigator />
+      </NavigationContainer>
+      {/* <NavigationContainer>
     <TabNavigator  />   
-    </NavigationContainer>
-
+    </NavigationContainer>*/}
+    </Provider>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

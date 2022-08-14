@@ -6,47 +6,64 @@ import {
   Modal,
   TextInput,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
-import Boton from "../Boton";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteItem, completeItem } from "../../store/lista/action";
 
 export default function ModalView(props) {
-  const { modalVisible, itemSelected, onHandlerDeleteItem,onHandlerCompleteItem } = props;
+  const { modalVisible, onShowModal, onHandlerCompleteItem, itemID } =
+    props;
+  const dispatch = useDispatch();
+  const categories = useSelector((store) => store.listaReducer.lista);
+
+  const itemSelected = categories.find((item) => item.id === itemID);
+
+
+  const onHandlerDelete = () => {
+    dispatch(deleteItem(itemID));
+    onShowModal();
+  };
+
+  const onHandlerComplete = () => {
+    dispatch(completeItem(itemID));
+    onShowModal();
+  };
+
   return (
     <Modal animationType="slide" transparent={false} visible={modalVisible}>
       <View style={styles.modal}>
         <View style={styles.modalView}>
           <View style={styles.modalTitle}>
-            <Text>{itemSelected.text}</Text>
+            <Text>{itemSelected ? itemSelected.text : null}</Text>
           </View>
           <View style={styles.modalMessage}>
             <Text>Elija una accion?</Text>
           </View>
           <View style={styles.modalMessage}>
-            <Text style={styles.modalItem}>{itemSelected.value}</Text>
+            <Text style={styles.modalItem}>{}</Text>
           </View>
           <View style={styles.modalButton}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => onHandlerDelete()}
+            >
+              <Text style={styles.text}>Eliminar</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-      style={styles.button}
-      onPress={() => onHandlerDeleteItem(itemSelected.id)}
-    >
-      <Text  style={styles.text} >Eliminar</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity
-      style={styles.button}
-      onPress={() => onHandlerCompleteItem(itemSelected.id)}
-
-    >
-      <Text  style={styles.text} >Completar</Text>
-    </TouchableOpacity>
-          
-          
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => onHandlerComplete()}
+            >
+              <Text style={styles.text}>Completar</Text>
+            </TouchableOpacity>
           </View>
         </View>
-        <TextInput autoFocus={true} placeholder="Autofocus to keep the keyboard" style={{display: 'none'}} />
-
+        <TextInput
+          autoFocus={true}
+          placeholder="Autofocus to keep the keyboard"
+          style={{ display: "none" }}
+        />
       </View>
     </Modal>
   );
@@ -86,16 +103,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 20,
-  },button:{
+  },
+  button: {
     backgroundColor: "#444140",
     padding: 10,
-    margin:10,
+    margin: 10,
     borderRadius: 10,
     marginTop: 10,
   },
-  text:{
+  text: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 20,
-  }
+  },
 });

@@ -7,42 +7,26 @@ import {
   Text,
 } from "react-native";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateItem } from "../../store/lista/action";
 
 const Tareas = ({ route, navigation }) => {
-  const { editItem } = route.params;
-
-  const [list, setList] = useState(route.params.list);
+  const { itemID } = route.params;
   const [textItem, setTextItem] = useState("");
-  const [itemSelected, setItemSelected] = useState();
-  
+  const dispatch = useDispatch();
+  const categories = useSelector((store) => store.listaReducer.lista);
+  const itemSelected = categories.find((item) => item.id === itemID);
+
   const onHandlerChangeItem = (text) => {
     setTextItem(text);
   };
 
   useEffect(() => {
-    if (editItem) {
-      setTextItem(editItem.text);
-    }
+    setTextItem(itemSelected.text);
+  }, [itemSelected]);
 
-    setList(route.params.list);
-    list.map((item) => {
-      if (item.id === editItem) {
-        setTextItem(item.text);
-        setItemSelected(item.id);
-      }
-    });
-  }, [editItem]);
-
-  const onHandlerModify = (id, newtext) => {
-    setList((item) =>
-      item.map((item) => {
-        if (item.id === id) {
-          item.text = newtext;
-        }
-        return item;
-      })
-    );
-    setItemSelected({});
+  const onHandlerUpdateItem = () => {
+    dispatch(updateItem({ id: itemID, text: textItem }));
   };
 
   return (
@@ -56,11 +40,9 @@ const Tareas = ({ route, navigation }) => {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          onHandlerModify(itemSelected, textItem);
+          onHandlerUpdateItem(itemID, textItem);
           navigation.navigate({
             name: "Lista de Tareas",
-            params: { list: list },
-            merge: true,
           });
         }}
       >
